@@ -149,24 +149,35 @@ export default function ProfitCalculator() {
 
   return (
     <div className="flex w-full max-w-5xl flex-col gap-6">
-      <div className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-2 text-xs">
-        <span className="text-zinc-500">
-          {ratesLoading
-            ? "최신 환율 불러오는 중..."
-            : ratesError
-              ? ratesError
-              : ratesDate
-                ? `최신 환율 적용됨 (${ratesDate} 기준)`
-                : "환율 정보 없음"}
-        </span>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-zinc-50">바이마 리셀러 수익률 계산기</h1>
+          <p className="text-sm text-zinc-500">해외 소싱 → 판매가 기준 순이익·수익률 자동 산출</p>
+        </div>
         <button
           type="button"
           onClick={() => refreshRates(costCurrency)}
           disabled={ratesLoading}
-          className="rounded-md border border-zinc-700 px-2 py-1 font-medium text-zinc-300 hover:border-zinc-500 disabled:opacity-50"
+          title={
+            ratesLoading
+              ? "최신 환율 불러오는 중..."
+              : ratesError
+                ? ratesError
+                : ratesDate
+                  ? `최신 환율 적용됨 (${ratesDate} 기준) — 클릭해서 새로고침`
+                  : "환율 새로고침"
+          }
+          className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300 disabled:opacity-50"
         >
-          환율 새로고침
+          •••
         </button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <SummaryCard label="순이익 (엔화)" value={`¥${formatNumber(result.netProfitJPY)}`} color={profitColor} />
+        <SummaryCard label="순이익 (원화 환산)" value={`₩${formatNumber(result.netProfitKRW)}`} color={profitColor} />
+        <SummaryCard label="수익률" value={`${formatNumber(result.profitMarginPercent, 1)}%`} color={profitColor} />
+        <SummaryCard label="ROI" value={`${formatNumber(result.roiPercent, 1)}%`} color={profitColor} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -281,29 +292,18 @@ export default function ProfitCalculator() {
             <ResultRow label="판매가" value={`¥${formatNumber(sellingPriceJPY)}`} />
             <ResultRow label="바이마 수수료" value={`-¥${formatNumber(result.buymaFeeJPY)}`} negative />
             <ResultRow label="실 수취액" value={`¥${formatNumber(result.receivedAmountJPY)}`} strong />
-
-            <div className="mt-2 flex items-center justify-between rounded-lg bg-zinc-900 px-3 py-3">
-              <span className="text-sm font-medium text-zinc-400">순이익 (JPY)</span>
-              <span className={`text-xl font-bold ${profitColor}`}>¥{formatNumber(result.netProfitJPY)}</span>
-            </div>
-            <div className="flex items-center justify-between rounded-lg bg-zinc-900 px-3 py-3">
-              <span className="text-sm font-medium text-zinc-400">순이익 (KRW)</span>
-              <span className={`text-xl font-bold ${profitColor}`}>₩{formatNumber(result.netProfitKRW)}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <div className="rounded-lg bg-zinc-900 p-4">
-            <div className="text-xs font-medium text-zinc-500">수익률 (판매가 대비)</div>
-            <div className={`text-xl font-bold ${profitColor}`}>{formatNumber(result.profitMarginPercent, 1)}%</div>
-          </div>
-          <div className="rounded-lg bg-zinc-900 p-4">
-            <div className="text-xs font-medium text-zinc-500">ROI (투자비용 대비)</div>
-            <div className={`text-xl font-bold ${profitColor}`}>{formatNumber(result.roiPercent, 1)}%</div>
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+function SummaryCard({ label, value, color }: { label: string; value: string; color: string }) {
+  return (
+    <div className="flex flex-col gap-1 rounded-xl border border-zinc-800 bg-zinc-950 p-4">
+      <span className="text-xs font-medium text-zinc-500">{label}</span>
+      <span className={`text-lg font-bold sm:text-xl ${color}`}>{value}</span>
     </div>
   );
 }
