@@ -336,11 +336,15 @@ export default function ProfitCalculator() {
         </section>
       </div>
 
-      <div className="flex flex-col items-center gap-2">
+      <div className="sticky bottom-0 z-20 -mx-4 flex flex-col items-center gap-2 bg-black/95 px-4 py-3 backdrop-blur sm:static sm:bg-transparent sm:backdrop-blur-none sm:py-0">
         <button
           type="button"
+          onPointerDown={() => {
+            (document.activeElement as HTMLElement | null)?.blur();
+          }}
           onClick={handleApply}
-          className="w-full max-w-xs rounded-lg bg-emerald-500 px-6 py-3 text-base font-semibold text-black transition-colors hover:bg-emerald-400"
+          style={{ touchAction: "manipulation" }}
+          className="w-full max-w-xs rounded-lg bg-emerald-500 px-6 py-3 text-base font-semibold text-black transition-colors hover:bg-emerald-400 active:bg-emerald-600"
         >
           적용
         </button>
